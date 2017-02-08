@@ -109,13 +109,22 @@ def fb_webhook():
             if 'text' not in message:
                 continue
             sender_id = event['sender']['id']
-            message_text = message['text'] + ', bro!'
-            request_url = FACEBOOK_API_MESSAGE_SEND_URL % (
-                app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
-            requests.post(request_url,
-                          headers={'Content-Type': 'application/json'},
-                          json={'recipient': {'id': sender_id},
-                                'message': {'text': message_text}})
+            message_text = (message['text']).lower()
+
+            # Process message_text & Get message to send 
+            message_send = message_text + ', bro!'
+            if "hi" in message_text or "hello" in message_text:
+                message_send = "Hi! How are you?"
+            elif "fine" in message_text or "good" in message_text:
+                message_send = "I'm having a great day today!"
+            elif "sup" in message_text:
+                message_send = "Just chilling, wbu?"
+            else :
+                message_send = "I'm sleepy, goodnight"
+
+            request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
+            requests.post(request_url, headers={'Content-Type': 'application/json'},
+                          json={'recipient': {'id': sender_id}, 'message': {'text': message_send}})
 
     # Return an empty response.
     return ''
