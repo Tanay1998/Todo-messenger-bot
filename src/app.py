@@ -157,7 +157,7 @@ def fb_webhook():
 
             # Display help
             if word_has(message_text.split()[0], ["help"]):
-                message_send = "HERE IS TUT"
+                message_send = get_tutorial()
 
             # To view list of completed tasks
             elif word_has(message_text.split()[0], ["list", "ls", "display"]) and word_has(message_text, ["done", "complete"]):       
