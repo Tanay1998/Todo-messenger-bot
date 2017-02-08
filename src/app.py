@@ -183,7 +183,7 @@ def fb_webhook():
 
                 elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete and deleting
                     index = int(query[0][1:])
-                    if word_has(query[1], ["finish", "done", "complete"]:
+                    if word_has(query[1], ["finish", "done", "complete"]):
                         todoList = get_todo_tasks(curUser)
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
@@ -193,7 +193,7 @@ def fb_webhook():
                             db.session.commit()
                             message_send = "Finished " + query[0] + ": " + curTodo.text
 
-                    elif word_has(query[1], ["remove", "delete", "chuck"]:
+                    elif word_has(query[1], ["remove", "delete", "chuck"]):
                         todoList = get_todo_tasks(curUser)
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
