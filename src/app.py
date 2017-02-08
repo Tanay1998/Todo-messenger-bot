@@ -91,7 +91,7 @@ def get_tutorial():
     tutorial_send += "\n- '$n finish' will mark the todo item with index n as complete"
     tutorial_send += "\n- '$n edit str' will change the todo item with index n to have a new label str"
     tutorial_send += "\n- '$n delete' will delete the todo item with index n"
-    tutorial_send += "\n- 'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
+    #tutorial_send += "\n- 'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
     return tutorial_send
 
 @app.route('/fb_webhook', methods=['GET', 'POST'])
