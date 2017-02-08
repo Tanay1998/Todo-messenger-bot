@@ -81,6 +81,19 @@ def word_has(word, matches):
             return True
     return False
 
+def get_tutorial():
+    tutorial_send = "TUTORIAL FOR TODO-TK\nHere is a list of basic commands you can use: "
+    tutorial_send += "\n'help' will display this tutorial"
+    tutorial_send += "\n'list' will print out your current todo list"
+    tutorial_send += "\n'list complete' will print out your list of completed tasks"
+    tutorial_send += "\n'add str' will create a new todo item with the label str"
+    tutorial_send += "\n'search str' will give you a list of all completed and incomplete todos which contain str"
+    tutorial_send += "\n'#n finish' will mark the todo item with index n as complete"
+    tutorial_send += "\n'#n edit str' will change the todo item with index n to have a new label str"
+    tutorial_send += "\n'#n delete' will delete the todo item with index n"
+    tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
+    return tutorial_send
+
 @app.route('/fb_webhook', methods=['GET', 'POST'])
 def fb_webhook():
     """This handler deals with incoming Facebook Messages.
@@ -128,16 +141,7 @@ def fb_webhook():
                 curUser = User(sender_id=sender_id)
                 db.session.add(curUser)
                 db.session.commit()
-                tutorial_send = "TUTORIAL FOR TODO-TK\nHere is a list of basic commands you can use: "
-                tutorial_send += "\n'list' will print out your current todo list"
-                tutorial_send += "\n'list complete' will print out your list of completed tasks"
-                tutorial_send += "\n'add str' will create a new todo item with the label str"
-                tutorial_send += "\n'search str' will give you a list of all completed and incomplete todos which contain str"
-                tutorial_send += "\n'#n finish' will mark the todo item with index n as complete"
-                tutorial_send += "\n'#n edit str' will change the todo item with index n to have a new label str"
-                tutorial_send += "\n'#n delete' will delete the todo item with index n"
-                tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
-                
+                tutorial_send = get_tutorial()
                 request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
                 requests.post(request_url, headers={'Content-Type': 'application/json'},
                           json={'recipient': {'id': sender_id}, 'message': {'text': tutorial_send}})
@@ -149,10 +153,14 @@ def fb_webhook():
                 Process message_text & Get message to send 
             '''
 
-            message_send = "Invalid command."
+            message_send = "Invalid command. To view "
+            
+            # Display help
+            if message_text.lower() == "help":
+                message_send = get_tutorial()
 
             # To view list of completed tasks
-            if word_has(message_text, ["list"]) and word_has(message_text, ["done", "complete"]):       
+            elif word_has(message_text.split()[0], ["list", "ls", "display"]) and word_has(message_text, ["done", "complete"]):       
                 message_send = "Completed Tasks:"
 
                 completeTodos = get_todo_tasks(curUser, True)
@@ -162,16 +170,18 @@ def fb_webhook():
                 if len(completeTodos) == 0:
                     message_send = "No tasks completed yet!"
 
-            elif word_has(message_text, ["list"]):              #To view list of tasks todo
+            #To view list of tasks todo
+            elif word_has(message_text.split()[0], ["list", "ls", "display"]):              
                 message_send = "Tasks Todo:"
                 incompleteTodos = get_todo_tasks(curUser, False)
                 for i in range(len(incompleteTodos)):
                     todo = incompleteTodos[i]
                     message_send += "\n#%d: %s" % (i + 1, todo.text)
                 if len(incompleteTodos) == 0:
-                    message_send = "No tasks todo!"            
+                    message_send = "No tasks todo!"   
 
-            elif word_has(message_text, ["clear", "delete", "remove", "erase"]) and word_has(message_text, ["all", "complete", "finish", "todo"]):
+            #Clear tasks
+            elif word_has(message_text.split()[0], ["clear", "delete", "remove", "erase"]) and word_has(message_text, ["all", "complete", "finish", "todo"]):
                 deleteIncomplete = False 
                 deleteComplete = False 
                 if word_has(message_text, [" complete", " finish"]):
@@ -184,15 +194,16 @@ def fb_webhook():
                 message_send = "Clearing tasks:"
                 if deleteComplete:
                     TodoItem.query.filter_by(user=curUser).filter(TodoItem.dateCompleted != None).delete(synchronize_session=False)
-                    message_send += "\nCleared completed tasks"
+                    message_send += "\n\tCleared completed tasks"
                 if deleteIncomplete:
                     TodoItem.query.filter_by(user=curUser).filter_by(dateCompleted = None).delete(synchronize_session=False)
-                    message_send += "\nCleared todo tasks"
+                    message_send += "\n\tCleared todo tasks"
                 db.session.commit()
 
             elif len(message_text) > 0:
                 query = message_text.split()
 
+                #Search for tasks
                 if len(query) > 1 and word_has(query[0], ["search"]):
                     searchQuery = ' '.join(query[1:])
                     todoList = TodoItem.query.filter_by(user=curUser).order_by(TodoItem.dateAdded).all()
@@ -206,8 +217,9 @@ def fb_webhook():
                     else:
                         message_send = "Found %d results: " % (len(matches))
                         for match in matches:
-                            message_send += "\n" + match
+                            message_send += "\n\t" + match
 
+                #Add a new task
                 elif len(query) > 1 and word_has(query[0], ["add", "insert", "input"]):               # For adding a new todo
                     text = ' '.join(query[1:])
                     newTodo = TodoItem(text=text, user=curUser, dateAdded=datetime.utcnow(), dateCompleted=None)
@@ -215,8 +227,10 @@ def fb_webhook():
                     db.session.commit()
                     message_send = "To-do item '" + text + "' added to list."
 
-                elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete and deleting
+                elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete, editing deleting
                     index = int(query[0][1:])
+
+                    # Mark as finished
                     if word_has(query[1], ["finish", "done", "complete"]):
                         todoList = get_todo_tasks(curUser, False)
                         if index > len(todoList):
@@ -227,15 +241,18 @@ def fb_webhook():
                             db.session.commit()
                             message_send = "Finished " + query[0] + ": " + curTodo.text
 
+                    # Edit task
                     elif len(query) > 2 and word_has(query[1], ["edit", "modify", "change"]):
                         todoList = get_todo_tasks(curUser, False)
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
                         else: 
                             curTodo = todoList[index - 1]
-                            curTodo.text = query[2:]
+                            curTodo.text = ' '.join(query[2:])
                             db.session.commit()
                             message_send = "Updated " + query[0] + ": " + curTodo.text
+
+                    #Delete task
                     elif word_has(query[1], ["remove", "delete", "clear", "erase"]):
                         todoList = get_todo_tasks(curUser, False)
                         if index > len(todoList):
