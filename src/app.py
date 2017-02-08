@@ -82,7 +82,7 @@ def word_has(word, matches):
     return False
 
 def get_tutorial():
-    tutorial_send = "TUTORIAL FOR Todo-TK\nHere is a list of basic commands you can use: "
+    tutorial_send = "TUTORIAL FOR Todo-TK. Here is a list of basic commands you can use: "
     tutorial_send += "\n- 'help' will display this tutorial"
     tutorial_send += "\n- 'list' will print out your current todo list"
     tutorial_send += "\n- 'list complete' will print out your list of completed tasks"

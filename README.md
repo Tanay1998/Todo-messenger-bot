@@ -19,8 +19,8 @@ test it against
 
 * list 
 * list all complete
-* #1 delete
-* #5 done 
+* $1 delete
+* $5 done 
 * add Eat cookies 
 * list 
 * list all complete 
@@ -28,9 +28,9 @@ test it against
 * add Submit repo 
 * list 
 * list all complete 
-* #2 finish
-* #4 finish
-* #1 delete
+* $2 finish
+* $4 finish
+* $1 delete
 * list 
 * list all complete
 * add Buy milk 
@@ -44,8 +44,8 @@ test it against
 * list all complete
 * add Cookies 
 * add Bananas
-* #1 edit Cake 
-* #2 finish
+* $1 edit Cake 
+* $2 finish
 * clear completed
 * list 
 * list all complete
