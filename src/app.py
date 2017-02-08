@@ -117,25 +117,28 @@ def fb_webhook():
                 db.session.add(curUser)
                 db.session.commit()
 
-
             message_text = (message['text']).lower().strip()
             print "Got: " + message_text
 
             # Process message_text & Get message to send 
             if message_text == "list":
-                message_send = "Tasks Todo: "
+                message_send = "Tasks Todo:"
                 incompleteTodos = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
                 for i in range(len(incompleteTodos)):
                     todo = incompleteTodos[i]
                     message_send += "\n#%d: %s" % (todo.id, todo.text)
+                if len(incompleteTodos) == 0:
+                    message_send = "No tasks todo!"
 
             elif message_text == "list done":
                 message_send = "Completed Tasks:"
 
-                incompleteTodos = TodoItem.query.filter(Todoitem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
-                for i in range(len(incompleteTodos)):
-                    todo = incompleteTodos[i]
+                completeTodos = TodoItem.query.filter(TodoItem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
+                for i in range(len(completeTodos)):
+                    todo = completeTodos[i]
                     message_send += "\n#%d: %s" % (todo.id, todo.text)
+                if len(completeTodos) == 0:
+                    message_send = "No tasks completed yet!"
 
             else:
                 query = message_text.split()
