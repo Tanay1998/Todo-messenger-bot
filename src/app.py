@@ -33,17 +33,19 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True)
 
 
-class Address(db.Model):
+class TodoItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # Free form address for simplicity.
-    full_address = db.Column(db.String, nullable=False)
+    
+    text = db.Column(db.String, nullable=False)
+    dateAdded = db.Column(db.Date, nullable=False)
+    dateCompleted = db.Column(db.Date, nullable=True) #None if event not completed
 
     # Connect each address to exactly one user.
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
                         nullable=False)
     # This adds an attribute 'user' to each address, and an attribute
     # 'addresses' (containing a list of addresses) to each user.
-    user = db.relationship('User', backref='addresses')
+    user = db.relationship('User', backref='todos')
 
 
 @app.route('/')
@@ -57,9 +59,10 @@ def index():
     # Just for demonstration purposes
     for user in User.query:  #
         print 'User %d, username %s' % (user.id, user.username)
-        for address in user.addresses:
-            print 'Address %d, full_address %s' % (
-                address.id, address.full_address)
+        for todo in user.todos:
+            print ('Todo %d: %s at' % (
+                todo.id, todo.text)) + todo.dateAdded + " completed: " + \
+                (todo.dateCompleted if todo.dateCompleted != None else "nope")
 
     # Render all of this into an HTML template and return it. We use
     # User.query.all() to obtain a list of all users, rather than an

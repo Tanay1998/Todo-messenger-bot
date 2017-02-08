@@ -4,14 +4,14 @@
   <ol>
     {% for user in users %}
       <li>{{ user.username }}
-        {% if user.addresses %}
+        {% if user.todos %}
           <ol>
-            {% for address in user.addresses %}
-              <li>{{ address.full_address }}</li>
+            {% for todo in user.todos %}
+              <li>{{ todo.text }}</li>
             {% endfor %}
           </ol>
         {% else %}
-          <p>No addresses for this user</p>
+          <p>No Todos for this user</p>
         {% endif %}
       </li>
     {% endfor %}
