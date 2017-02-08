@@ -128,7 +128,15 @@ def fb_webhook():
                 curUser = User(sender_id=sender_id)
                 db.session.add(curUser)
                 db.session.commit()
-                tutorial_send = "TUTORIAL FOR TODO-TK\n"
+                tutorial_send = "TUTORIAL FOR TODO-TK\nHere is a list of basic commands you can use: "
+                tutorial_send += "\n'list' will print out your current todo list"
+                tutorial_send += "\n'list complete' will print out your list of completed tasks"
+                tutorial_send += "\n'add x' will create a new todo item with the label x"
+                tutorial_send += "\n'search x' will give you a list of all completed and incomplete todos which contain x"
+                tutorial_send += "\n'#n finish' will mark the todo item with index n as complete"
+                tutorial_send += "\n'#n delete' will delete the todo item with index n"
+                tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
+                
                 request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
                 requests.post(request_url, headers={'Content-Type': 'application/json'},
                           json={'recipient': {'id': sender_id}, 'message': {'text': tutorial_send}})
@@ -171,11 +179,13 @@ def fb_webhook():
                     deleteIncomplete = True
                 if not deleteIncomplete and not deleteComplete:
                     deleteIncomplete, deleteComplete = True, True
-
+                message_send = ""
                 if deleteComplete:
-                    TodoItem.query.filter_by(user=user).filter(TodoItem.dateCompleted != None).delete(synchronize_session=False)
+                    TodoItem.query.filter_by(user=curUser).filter(TodoItem.dateCompleted != None).delete(synchronize_session=False)
+                    message_send += "Cleared completed tasks"
                 if deleteIncomplete:
-                    TodoItem.query.filter_by(user=user).filter_by(dateCompleted = None).delete(synchronize_session=False)
+                    TodoItem.query.filter_by(user=curUser).filter_by(dateCompleted = None).delete(synchronize_session=False)
+                    message_send += "Cleared todo tasks"
 
             elif len(message_text) > 0:
                 query = message_text.split()
