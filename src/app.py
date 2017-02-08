@@ -74,7 +74,7 @@ def get_todo_tasks(user):
 
 def word_has(word, matches):
     for match in matches: 
-        if match in word:
+        if match in word.lower():
             return True
     return False
 
@@ -126,7 +126,7 @@ def fb_webhook():
                 db.session.add(curUser)
                 db.session.commit()
 
-            message_text = (message['text']).lower().strip()
+            message_text = (message['text']).strip()
             print "Got: " + message_text
 
             '''
@@ -169,7 +169,7 @@ def fb_webhook():
                     if len(matches) == 0:
                         message_send = "No matches found for search"
                     else:
-                        message_send = "Found %d results: "
+                        message_send = "Found %d results: " % (len(matches))
                         for match in matches:
                             message_send += "\n" + match
 
