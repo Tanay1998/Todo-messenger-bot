@@ -69,6 +69,9 @@ def index():
     # query results.
     return flask.render_template('index.html', users=User.query.all())
 
+def get_todo_tasks():
+    return TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+
 
 @app.route('/fb_webhook', methods=['GET', 'POST'])
 def fb_webhook():
@@ -127,7 +130,7 @@ def fb_webhook():
 
             if message_text == "list":              #To view list of tasks todo
                 message_send = "Tasks Todo:"
-                incompleteTodos = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+                incompleteTodos = get_todo_tasks()
                 for i in range(len(incompleteTodos)):
                     todo = incompleteTodos[i]
                     message_send += "\n#%d: %s" % (i + 1, todo.text)
@@ -148,7 +151,7 @@ def fb_webhook():
                 query = message_text.split()
                 if query[0] == "add":               # For adding a new todo
                     text = ' '.join(query[1:])
-                    newTodo = TodoItem(text=text, user=curUser, date=datetime.utcnow(), dateCompleted=None)
+                    newTodo = TodoItem(text=text, user=curUser, dateAdded=datetime.utcnow(), dateCompleted=None)
                     db.session.add(newTodo)
                     db.session.commit()
                     message_send = "To-do item '" + text + "'added to list."
@@ -156,8 +159,7 @@ def fb_webhook():
                 elif query[0][0] == '#':            # For Marking as complete and deleting
                     index = int(query[0][1:])
                     if query[1] == "done":
-                        
-                        todoList = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+                        todoList = get_todo_tasks()
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
                         else: 
@@ -167,7 +169,7 @@ def fb_webhook():
                             message_send = "Finished " + query[0] + ": " + curTodo.text
 
                     elif query[1] == "delete":
-                        todoList = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+                        todoList = get_todo_tasks()
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
                         else: 
