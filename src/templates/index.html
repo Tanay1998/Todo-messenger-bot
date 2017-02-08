@@ -3,7 +3,7 @@
 {% if users %}
   <ol>
     {% for user in users %}
-      <li>{{ user.username }}
+      <li>{{ user.sender_id }}
         {% if user.todos %}
           <ol>
             {% for todo in user.todos %}

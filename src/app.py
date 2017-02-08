@@ -96,13 +96,6 @@ def get_tutorial():
 
 @app.route('/fb_webhook', methods=['GET', 'POST'])
 def fb_webhook():
-    """This handler deals with incoming Facebook Messages.
-
-    In this example implementation, we handle the initial handshake mechanism,
-    then just echo all incoming messages back to the sender. Not exactly Skynet
-    level AI, but we had to keep it short...
-
-    """
     # Handle the initial handshake request.
     if flask.request.method == 'GET':
         if (flask.request.args.get('hub.mode') == 'subscribe' and
