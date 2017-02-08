@@ -116,7 +116,7 @@ def fb_webhook():
             for w in ["hey", "hello", "hi"]:
                 if w in message_text:
                     message_send = "Hi! How are you?"
-            elif "fine" in message_text or "good" in message_text:
+            if "fine" in message_text or "good" in message_text:
                 message_send = "I'm having a great day today!"
             elif "sup" in message_text:
                 message_send = "Just chilling, wbu?"
