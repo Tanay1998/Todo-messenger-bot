@@ -112,16 +112,14 @@ def fb_webhook():
             message_text = (message['text']).lower()
 
             # Process message_text & Get message to send 
-            message_send = message_text + ', bro!'
+            message_send = "I'm sleepy, goodnight"
             for w in ["hey", "hello", "hi"]:
                 if w in message_text:
                     message_send = "Hi! How are you?"
             if "fine" in message_text or "good" in message_text:
                 message_send = "I'm having a great day today!"
             elif "sup" in message_text:
-                message_send = "Just chilling, wbu?"
-            else :
-                message_send = "I'm sleepy, goodnight"
+                message_send = "Just chilling, wbu?"                
 
             request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
             requests.post(request_url, headers={'Content-Type': 'application/json'},
