@@ -126,7 +126,7 @@ def fb_webhook():
                 incompleteTodos = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
                 for i in range(len(incompleteTodos)):
                     todo = incompleteTodos[i]
-                    message_send += "\n#%d: %s" % (todo.id, todo.text)
+                    message_send += "\n#%d: %s" % (i + 1, todo.text)
                 if len(incompleteTodos) == 0:
                     message_send = "No tasks todo!"
 
@@ -143,15 +143,23 @@ def fb_webhook():
             else:
                 query = message_text.split()
                 if query[0] == "add":
-                    text = query[1:].join(' ')
+                    text = str.join(query[1:])
                     newTodo = TodoItem(text=text, user=curUser, date=datetime.utcnow(), dateCompleted=None)
                     db.session.add(newTodo)
                     db.session.commit()
                     message_send = "To-do item '" + text + "'added to list."
+
                 elif query[0][0] == '#':
                     index = int(query[0][1:])
                     if query[1] == "done":
-                        message_send = "Finished " + str(index)
+                        message_send = "Finished " + query[0]
+                        todoList = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+                        if index > len(todoList):
+                            message_send = "A task with this index does not exist"
+                        else: 
+                            curTodo = todoList[index - 1]
+                            curTodo.dateCompleted = datetime.utcnow()
+                            #??
 
                     elif query[1] == "delete":
                         message_send = "Deleting " + str(index)
