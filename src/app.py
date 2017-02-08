@@ -111,7 +111,7 @@ def fb_webhook():
             sender_id = event['sender']['id']
 
             #Get user 
-            curUser = User.query.filter_by(sender_id=sender_id)
+            curUser = User.query.filter_by(sender_id=sender_id).first()
             if curUser == None:
                 curUser = User(sender_id=sender_id)
                 db.session.add(curUser)
@@ -123,10 +123,19 @@ def fb_webhook():
 
             # Process message_text & Get message to send 
             if message_text == "list":
-                message_send = "Print list"
+                message_send = "Tasks Todo: "
+                incompleteTodos = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+                for i in range(len(incompleteTodos)):
+                    todo = incompleteTodos[i]
+                    message_send += "\n#%d: %s" % (todo.id, todo.text)
 
             elif message_text == "list done":
-                message_send = "Print finished list"
+                message_send = "Completed Tasks:"
+
+                incompleteTodos = TodoItem.query.filter(Todoitem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
+                for i in range(len(incompleteTodos)):
+                    todo = incompleteTodos[i]
+                    message_send += "\n#%d: %s" % (todo.id, todo.text)
 
             else:
                 query = message_text.split()
