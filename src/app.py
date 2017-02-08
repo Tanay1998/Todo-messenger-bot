@@ -156,52 +156,52 @@ def fb_webhook():
                 if len(incompleteTodos) == 0:
                     message_send = "No tasks todo!"            
 
-            elif len(message_text) > 0:
-                query = message_text.split()
+            # elif len(message_text) > 0:
+            #     query = message_text.split()
 
-                if len(query) > 1 and word_has(query[0], ["search"]):
-                    searchQuery = ' '.join(query[1:])
-                    todoList = TodoItem.query.filter_by(user=curUser).order_by(TodoItem.dateAdded).all()
-                    matches = []
-                    for i in range(len(todoList)):
-                        todo = todoList[i]
-                        if searchQuery in todo.text:
-                            matches.append(todo.text + (" (Incomplete)" if todo.dateCompleted == None else " (Finished)"))
-                    if len(matches) == 0:
-                        message_send = "No matches found for search"
-                    else 
-                        message_send = "Found %d results: "
-                        for match in matches:
-                            message_send += "\n" + match
+            #     if len(query) > 1 and word_has(query[0], ["search"]):
+            #         searchQuery = ' '.join(query[1:])
+            #         todoList = TodoItem.query.filter_by(user=curUser).order_by(TodoItem.dateAdded).all()
+            #         matches = []
+            #         for i in range(len(todoList)):
+            #             todo = todoList[i]
+            #             if searchQuery in todo.text:
+            #                 matches.append(todo.text + (" (Incomplete)" if todo.dateCompleted == None else " (Finished)"))
+            #         if len(matches) == 0:
+            #             message_send = "No matches found for search"
+            #         else 
+            #             message_send = "Found %d results: "
+            #             for match in matches:
+            #                 message_send += "\n" + match
 
-                elif len(query) > 1 and word_has(query[0], ["add", "insert", "input"]):               # For adding a new todo
-                    text = ' '.join(query[1:])
-                    newTodo = TodoItem(text=text, user=curUser, dateAdded=datetime.utcnow(), dateCompleted=None)
-                    db.session.add(newTodo)
-                    db.session.commit()
-                    message_send = "To-do item '" + text + "' added to list."
+            #     elif len(query) > 1 and word_has(query[0], ["add", "insert", "input"]):               # For adding a new todo
+            #         text = ' '.join(query[1:])
+            #         newTodo = TodoItem(text=text, user=curUser, dateAdded=datetime.utcnow(), dateCompleted=None)
+            #         db.session.add(newTodo)
+            #         db.session.commit()
+            #         message_send = "To-do item '" + text + "' added to list."
 
-                elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete and deleting
-                    index = int(query[0][1:])
-                    if word_has(query[1], ["finish", "done", "complete"]):
-                        todoList = get_todo_tasks(curUser)
-                        if index > len(todoList):
-                            message_send = "A task with this index does not exist"
-                        else: 
-                            curTodo = todoList[index - 1]
-                            curTodo.dateCompleted = datetime.utcnow()
-                            db.session.commit()
-                            message_send = "Finished " + query[0] + ": " + curTodo.text
+            #     elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete and deleting
+            #         index = int(query[0][1:])
+            #         if word_has(query[1], ["finish", "done", "complete"]):
+            #             todoList = get_todo_tasks(curUser)
+            #             if index > len(todoList):
+            #                 message_send = "A task with this index does not exist"
+            #             else: 
+            #                 curTodo = todoList[index - 1]
+            #                 curTodo.dateCompleted = datetime.utcnow()
+            #                 db.session.commit()
+            #                 message_send = "Finished " + query[0] + ": " + curTodo.text
 
-                    elif word_has(query[1], ["remove", "delete", "chuck"]):
-                        todoList = get_todo_tasks(curUser)
-                        if index > len(todoList):
-                            message_send = "A task with this index does not exist"
-                        else: 
-                            curTodo = todoList[index - 1]
-                            db.session.delete(curTodo)
-                            db.session.commit()
-                            message_send = "Deleted " + query[0] + ": " + curTodo.text
+            #         elif word_has(query[1], ["remove", "delete", "chuck"]):
+            #             todoList = get_todo_tasks(curUser)
+            #             if index > len(todoList):
+            #                 message_send = "A task with this index does not exist"
+            #             else: 
+            #                 curTodo = todoList[index - 1]
+            #                 db.session.delete(curTodo)
+            #                 db.session.commit()
+            #                 message_send = "Deleted " + query[0] + ": " + curTodo.text
 
 
             request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
