@@ -57,7 +57,7 @@ def index():
     """
     # Just for demonstration purposes
     for user in User.query:  #
-        print 'User %d, username %s' % (user.id, user.username)
+        print 'User %d, username %s' % (user.id, user.sender_id)
         for todo in user.todos:
             print 'Todo %d: %s at' % (todo.id, todo.text)
 
@@ -120,7 +120,7 @@ def fb_webhook():
 
             message_text = (message['text']).lower().strip()
             print "Got: " + message_text
-            
+
             # Process message_text & Get message to send 
             if message_text == "list":
                 message_send = "Print list"
@@ -132,8 +132,10 @@ def fb_webhook():
                 query = message_text.split()
                 if query[0] == "add":
                     text = query[1:].join(' ')
-                    message_send = "Adding " + text
-
+                    newTodo = TodoItem(text=text, user=curUser, date=datetime.utcnow(), dateCompleted=None)
+                    db.session.add(newTodo)
+                    db.session.commit()
+                    message_send = "To-do item '" + text + "'added to list."
                 elif query[0][0] == '#':
                     index = int(query[0][1:])
                     if query[1] == "done":
