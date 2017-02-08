@@ -60,9 +60,7 @@ def index():
     for user in User.query:  #
         print 'User %d, username %s' % (user.id, user.username)
         for todo in user.todos:
-            print ('Todo %d: %s at' % (
-                todo.id, todo.text)) + todo.dateAdded + " completed: " + \
-                (todo.dateCompleted if todo.dateCompleted != None else "nope")
+            print 'Todo %d: %s at' % (todo.id, todo.text)
 
     # Render all of this into an HTML template and return it. We use
     # User.query.all() to obtain a list of all users, rather than an
@@ -112,8 +110,8 @@ def fb_webhook():
             if 'text' not in message:
                 continue
             sender_id = event['sender']['id']
-            message_text = (message['text']).lower().trim()
-
+            message_text = (message['text']).encode('ascii', 'ignore').lower().trim()
+            print "Got: " + message_text
             # Process message_text & Get message to send 
             if message_text == "list":
                 message_send = "Print list"
