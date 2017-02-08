@@ -30,7 +30,7 @@ db = SQLAlchemy(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
+    sender_id = db.Column(db.String(80), unique=True)
 
 
 class TodoItem(db.Model):
@@ -41,8 +41,7 @@ class TodoItem(db.Model):
     dateCompleted = db.Column(db.Date, nullable=True) #None if event not completed
 
     # Connect each address to exactly one user.
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
-                        nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     # This adds an attribute 'user' to each address, and an attribute
     # 'addresses' (containing a list of addresses) to each user.
     user = db.relationship('User', backref='todos')
@@ -110,8 +109,18 @@ def fb_webhook():
             if 'text' not in message:
                 continue
             sender_id = event['sender']['id']
-            message_text = (message['text']).encode('ascii', 'ignore').lower().trim()
+
+            #Get user 
+            curUser = User.query.filter_by(sender_id=sender_id)
+            if curUser == None:
+                curUser = User(sender_id=sender_id)
+                db.session.add(curUser)
+                db.session.commit()
+
+
+            message_text = (message['text']).lower().strip()
             print "Got: " + message_text
+            
             # Process message_text & Get message to send 
             if message_text == "list":
                 message_send = "Print list"
