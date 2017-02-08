@@ -83,15 +83,15 @@ def word_has(word, matches):
 
 def get_tutorial():
     tutorial_send = "TUTORIAL FOR Todo-TK\nHere is a list of basic commands you can use: "
-    tutorial_send += "\n-'help' will display this tutorial"
-    tutorial_send += "\n-'list' will print out your current todo list"
-    tutorial_send += "\n-'list complete' will print out your list of completed tasks"
-    tutorial_send += "\n-'add str' will create a new todo item with the label str"
-    tutorial_send += "\n-'search str' will give you a list of all completed and incomplete todos which contain str"
-    tutorial_send += "\n'$n finish' will mark the todo item with index n as complete"
-    tutorial_send += "\n'$n edit str' will change the todo item with index n to have a new label str"
-    tutorial_send += "\n'$n delete' will delete the todo item with index n"
-    # tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
+    tutorial_send += "\n- 'help' will display this tutorial"
+    tutorial_send += "\n- 'list' will print out your current todo list"
+    tutorial_send += "\n- 'list complete' will print out your list of completed tasks"
+    tutorial_send += "\n- 'add str' will create a new todo item with the label str"
+    tutorial_send += "\n- 'search str' will give you a list of all completed and incomplete todos which contain str"
+    tutorial_send += "\n- '$n finish' will mark the todo item with index n as complete"
+    tutorial_send += "\n- '$n edit str' will change the todo item with index n to have a new label str"
+    tutorial_send += "\n- '$n delete' will delete the todo item with index n"
+    tutorial_send += "\n- 'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
     return tutorial_send
 
 @app.route('/fb_webhook', methods=['GET', 'POST'])
@@ -227,7 +227,7 @@ def fb_webhook():
                     db.session.commit()
                     message_send = "To-do item '" + text + "' added to list."
 
-                elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete, editing deleting
+                elif len(query) > 1 and query[0][0] == '$':            # For Marking as complete, editing deleting
                     index = int(query[0][1:])
 
                     # Mark as finished
