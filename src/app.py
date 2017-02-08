@@ -131,9 +131,10 @@ def fb_webhook():
                 tutorial_send = "TUTORIAL FOR TODO-TK\nHere is a list of basic commands you can use: "
                 tutorial_send += "\n'list' will print out your current todo list"
                 tutorial_send += "\n'list complete' will print out your list of completed tasks"
-                tutorial_send += "\n'add x' will create a new todo item with the label x"
-                tutorial_send += "\n'search x' will give you a list of all completed and incomplete todos which contain x"
+                tutorial_send += "\n'add str' will create a new todo item with the label str"
+                tutorial_send += "\n'search str' will give you a list of all completed and incomplete todos which contain str"
                 tutorial_send += "\n'#n finish' will mark the todo item with index n as complete"
+                tutorial_send += "\n'#n edit str' will change the todo item with index n to have a new label str"
                 tutorial_send += "\n'#n delete' will delete the todo item with index n"
                 tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
                 
@@ -187,8 +188,8 @@ def fb_webhook():
                 if deleteIncomplete:
                     TodoItem.query.filter_by(user=curUser).filter_by(dateCompleted = None).delete(synchronize_session=False)
                     message_send += "\nCleared todo tasks"
-                session.commit()
-                
+                db.session.commit()
+
             elif len(message_text) > 0:
                 query = message_text.split()
 
@@ -226,6 +227,15 @@ def fb_webhook():
                             db.session.commit()
                             message_send = "Finished " + query[0] + ": " + curTodo.text
 
+                    elif len(query) > 2 and word_has(query[1], ["edit", "modify", "change"]):
+                        todoList = get_todo_tasks(curUser, False)
+                        if index > len(todoList):
+                            message_send = "A task with this index does not exist"
+                        else: 
+                            curTodo = todoList[index - 1]
+                            curTodo.text = query[2:]
+                            db.session.commit()
+                            message_send = "Updated " + query[0] + ": " + curTodo.text
                     elif word_has(query[1], ["remove", "delete", "clear", "erase"]):
                         todoList = get_todo_tasks(curUser, False)
                         if index > len(todoList):
