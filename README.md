@@ -9,7 +9,7 @@ FEATURES SUPPORTED:
 7. Searching for todo items
 8. Clear all todos (User can select if they want to delete all completed items, all incomplete items, or all elements)
 9. Displays a tutorial for new users (existing users can access this by typing 'help')
-10. Allows the user to edit a todo itempy
+10. Allows the user to edit a todo item
 
 UNIT TESTS
 Note: I have never written unit tests before. I have also never deployed a webservice or written script to run on
@@ -42,8 +42,11 @@ test it against
   list 
   list all complete
   add Cookies 
-  add Bananas 
+  add Bananas
+  #1 edit Cake 
   #2 finish
   clear completed
   list 
   list all complete
+  help
+

@@ -82,16 +82,16 @@ def word_has(word, matches):
     return False
 
 def get_tutorial():
-    tutorial_send = "TUTORIAL FOR TODO-TK\nHere is a list of basic commands you can use: "
-    tutorial_send += "\n'help' will display this tutorial"
-    tutorial_send += "\n'list' will print out your current todo list"
-    tutorial_send += "\n'list complete' will print out your list of completed tasks"
-    tutorial_send += "\n'add str' will create a new todo item with the label str"
-    tutorial_send += "\n'search str' will give you a list of all completed and incomplete todos which contain str"
-    tutorial_send += "\n'#n finish' will mark the todo item with index n as complete"
-    tutorial_send += "\n'#n edit str' will change the todo item with index n to have a new label str"
-    tutorial_send += "\n'#n delete' will delete the todo item with index n"
-    tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
+    tutorial_send = "TUTORIAL FOR Todo-TK\nHere is a list of basic commands you can use: "
+    # tutorial_send += "\n'help' will display this tutorial"
+    # tutorial_send += "\n'list' will print out your current todo list"
+    # tutorial_send += "\n'list complete' will print out your list of completed tasks"
+    # tutorial_send += "\n'add str' will create a new todo item with the label str"
+    # tutorial_send += "\n'search str' will give you a list of all completed and incomplete todos which contain str"
+    # tutorial_send += "\n'#n finish' will mark the todo item with index n as complete"
+    # tutorial_send += "\n'#n edit str' will change the todo item with index n to have a new label str"
+    # tutorial_send += "\n'#n delete' will delete the todo item with index n"
+    # tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
     return tutorial_send
 
 @app.route('/fb_webhook', methods=['GET', 'POST'])
@@ -157,7 +157,7 @@ def fb_webhook():
 
             # Display help
             if word_has(message_text.split()[0], ["help"]):
-                message_send = get_tutorial()
+                message_send = "HERE IS TUT"
 
             # To view list of completed tasks
             elif word_has(message_text.split()[0], ["list", "ls", "display"]) and word_has(message_text, ["done", "complete"]):       
