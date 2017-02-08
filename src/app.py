@@ -69,8 +69,11 @@ def index():
     # query results.
     return flask.render_template('index.html', users=User.query.all())
 
-def get_todo_tasks(user):
-    return TodoItem.query.filter_by(user=user).filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+def get_todo_tasks(user, isComplete = False):
+    if isComplete:
+        return TodoItem.query.filter_by(user=user).filter(TodoItem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
+    else:
+        return TodoItem.query.filter_by(user=user).filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
 
 def word_has(word, matches):
     for match in matches: 
@@ -139,7 +142,7 @@ def fb_webhook():
             if word_has(message_text, ["list"]) and word_has(message_text, ["done", "complete"]):       
                 message_send = "Completed Tasks:"
 
-                completeTodos = TodoItem.query.filter_by(user=curUser).filter(TodoItem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
+                completeTodos = get_todo_tasks(curUser, True)
                 for i in range(len(completeTodos)):
                     todo = completeTodos[i]
                     message_send += "\n#%d: %s" % (i + 1, todo.text)
@@ -148,12 +151,27 @@ def fb_webhook():
 
             elif word_has(message_text, ["list"]):              #To view list of tasks todo
                 message_send = "Tasks Todo:"
-                incompleteTodos = get_todo_tasks(curUser)
+                incompleteTodos = get_todo_tasks(curUser, False)
                 for i in range(len(incompleteTodos)):
                     todo = incompleteTodos[i]
                     message_send += "\n#%d: %s" % (i + 1, todo.text)
                 if len(incompleteTodos) == 0:
                     message_send = "No tasks todo!"            
+
+            elif word_has(message_text, ["clear", "delete", "remove", "erase"]) and word_has(message_text, ["all"]):
+                deleteIncomplete = False 
+                deleteComplete = False 
+                if word_has(message_text, [" complete", " finish"]):
+                    deleteComplete = True
+                if word_has(message_text, [" incomplete", " todo"]):
+                    deleteIncomplete = True
+                if not deleteIncomplete and not deleteComplete:
+                    deleteIncomplete, deleteComplete = True, True
+
+                if deleteComplete:
+                    TodoItem.query.filter_by(user=user).filter(TodoItem.dateCompleted != None).delete(synchronize_session=False)
+                if deleteIncomplete:
+                    TodoItem.query.filter_by(user=user).filter_by(dateCompleted = None).delete(synchronize_session=False)
 
             elif len(message_text) > 0:
                 query = message_text.split()
@@ -183,7 +201,7 @@ def fb_webhook():
                 elif len(query) > 1 and query[0][0] == '#':            # For Marking as complete and deleting
                     index = int(query[0][1:])
                     if word_has(query[1], ["finish", "done", "complete"]):
-                        todoList = get_todo_tasks(curUser)
+                        todoList = get_todo_tasks(curUser, False)
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
                         else: 
@@ -192,8 +210,8 @@ def fb_webhook():
                             db.session.commit()
                             message_send = "Finished " + query[0] + ": " + curTodo.text
 
-                    elif word_has(query[1], ["remove", "delete", "chuck"]):
-                        todoList = get_todo_tasks(curUser)
+                    elif word_has(query[1], ["remove", "delete", "clear", "erase"]):
+                        todoList = get_todo_tasks(curUser, False)
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
                         else: 

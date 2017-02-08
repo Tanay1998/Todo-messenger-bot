@@ -7,9 +7,12 @@ Features Supported:
 5. List all complete tasks 
 6. Basic NLP for flexible queries
 7. Searching for todo items
+8. Clear all todos
 
 
-Note: I have never written unit tests before. But these are the queries I would test it against 
+Note: I have never written unit tests before. I have also never deployed a webservice or written script to run on
+the web / a server, therefore I am unsure of the tests to perform. Regarding the queries however, this is what I would 
+test it against 
 
   list 
   list all complete
@@ -22,8 +25,15 @@ Note: I have never written unit tests before. But these are the queries I would 
   add Submit repo 
   list 
   list all complete 
-  finish #2
-  finish #4 
-  delete #1 
+  #2 finish
+  #4 finish
+  #1 delete
   list 
   list all complete
+  add Buy milk 
+  add Buy cookies
+  add Drink water 
+  search cookies 
+  search milk 
+  search water 
+  clear all
