@@ -143,7 +143,7 @@ def fb_webhook():
             else:
                 query = message_text.split()
                 if query[0] == "add":
-                    text = str.join(query[1:])
+                    text = ' '.join(query[1:])
                     newTodo = TodoItem(text=text, user=curUser, date=datetime.utcnow(), dateCompleted=None)
                     db.session.add(newTodo)
                     db.session.commit()
@@ -159,7 +159,7 @@ def fb_webhook():
                         else: 
                             curTodo = todoList[index - 1]
                             curTodo.dateCompleted = datetime.utcnow()
-                            #??
+                            session.commit()
 
                     elif query[1] == "delete":
                         message_send = "Deleting " + str(index)
