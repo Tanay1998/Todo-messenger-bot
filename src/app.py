@@ -88,9 +88,9 @@ def get_tutorial():
     tutorial_send += "\n-'list complete' will print out your list of completed tasks"
     tutorial_send += "\n-'add str' will create a new todo item with the label str"
     tutorial_send += "\n-'search str' will give you a list of all completed and incomplete todos which contain str"
-    # tutorial_send += "\n'$n finish' will mark the todo item with index n as complete"
-    # tutorial_send += "\n'$n edit str' will change the todo item with index n to have a new label str"
-    # tutorial_send += "\n'$n delete' will delete the todo item with index n"
+    tutorial_send += "\n'$n finish' will mark the todo item with index n as complete"
+    tutorial_send += "\n'$n edit str' will change the todo item with index n to have a new label str"
+    tutorial_send += "\n'$n delete' will delete the todo item with index n"
     # tutorial_send += "\n'clear all', 'clear completed', 'clear todo' will respectively, clear all lists, clear the list of completed tasks, and clear the current todo list"
     return tutorial_send
 
