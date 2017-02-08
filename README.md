@@ -7,7 +7,7 @@ Features Supported:
 5. List all complete tasks 
 6. Basic NLP for flexible queries
 7. Searching for todo items
-8. Clear all todos
+8. Clear all todos (User can select if they want to delete all completed items, all incomplete items, or all elements)
 
 
 Note: I have never written unit tests before. I have also never deployed a webservice or written script to run on
@@ -37,3 +37,5 @@ test it against
   search milk 
   search water 
   clear all
+  list 
+  list all complete

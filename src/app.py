@@ -128,6 +128,10 @@ def fb_webhook():
                 curUser = User(sender_id=sender_id)
                 db.session.add(curUser)
                 db.session.commit()
+                tutorial_send = "TUTORIAL FOR TODO-TK\n"
+                request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
+                requests.post(request_url, headers={'Content-Type': 'application/json'},
+                          json={'recipient': {'id': sender_id}, 'message': {'text': tutorial_send}})
 
             message_text = (message['text']).strip()
             print "Got: " + message_text
@@ -158,7 +162,7 @@ def fb_webhook():
                 if len(incompleteTodos) == 0:
                     message_send = "No tasks todo!"            
 
-            elif word_has(message_text, ["clear", "delete", "remove", "erase"]) and word_has(message_text, ["all"]):
+            elif word_has(message_text, ["clear", "delete", "remove", "erase"]) and word_has(message_text, ["all", "complete", "finish", "todo"]):
                 deleteIncomplete = False 
                 deleteComplete = False 
                 if word_has(message_text, [" complete", " finish"]):
