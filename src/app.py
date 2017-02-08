@@ -153,10 +153,10 @@ def fb_webhook():
                 Process message_text & Get message to send 
             '''
 
-            message_send = "Invalid command. To view "
-            
+            message_send = "Invalid command. To view all commands, type 'help'"
+
             # Display help
-            if message_text.lower() == "help":
+            if word_has(message_text.split()[0], ["help"]):
                 message_send = get_tutorial()
 
             # To view list of completed tasks

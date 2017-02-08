@@ -1,5 +1,5 @@
 
-Features Supported: 
+FEATURES SUPPORTED: 
 1. Add a new task
 2. Mark a task as finished
 3. Delete tasks 
@@ -8,10 +8,10 @@ Features Supported:
 6. Basic NLP for flexible queries (support for usage of multiple verbs, and much more flexible query format)
 7. Searching for todo items
 8. Clear all todos (User can select if they want to delete all completed items, all incomplete items, or all elements)
-9. Displays a tutorial for new users
+9. Displays a tutorial for new users (existing users can access this by typing 'help')
 10. Allows the user to edit a todo itempy
 
-
+UNIT TESTS
 Note: I have never written unit tests before. I have also never deployed a webservice or written script to run on
 the web / a server, therefore I am unsure of the tests to perform. Regarding the queries however, this is what I would 
 test it against 
@@ -39,5 +39,11 @@ test it against
   search milk 
   search water 
   clear all
+  list 
+  list all complete
+  add Cookies 
+  add Bananas 
+  #2 finish
+  clear completed
   list 
   list all complete
