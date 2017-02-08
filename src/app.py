@@ -11,6 +11,7 @@ import os
 import flask
 import requests
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 
 FACEBOOK_API_MESSAGE_SEND_URL = (
     'https://graph.facebook.com/v2.6/me/messages?access_token=%s')
@@ -152,17 +153,25 @@ def fb_webhook():
                 elif query[0][0] == '#':
                     index = int(query[0][1:])
                     if query[1] == "done":
-                        message_send = "Finished " + query[0]
+                        
                         todoList = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
                         if index > len(todoList):
                             message_send = "A task with this index does not exist"
                         else: 
                             curTodo = todoList[index - 1]
                             curTodo.dateCompleted = datetime.utcnow()
-                            session.commit()
+                            db.session.commit()
+                            message_send = "Finished " + query[0] + ": " + curTodo.text
 
                     elif query[1] == "delete":
-                        message_send = "Deleting " + str(index)
+                        todoList = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
+                        if index > len(todoList):
+                            message_send = "A task with this index does not exist"
+                        else: 
+                            curTodo = todoList[index - 1]
+                            db.session.delete(curTodo)
+                            db.session.commit()
+                            message_send = "Finished " + query[0] + ": " + curTodo.text
 
 
             request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
