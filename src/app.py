@@ -11,7 +11,7 @@ import os
 import flask
 import requests
 from flask_sqlalchemy import SQLAlchemy
-import datetime
+from datetime import datetime
 
 FACEBOOK_API_MESSAGE_SEND_URL = (
     'https://graph.facebook.com/v2.6/me/messages?access_token=%s')
@@ -121,8 +121,11 @@ def fb_webhook():
             message_text = (message['text']).lower().strip()
             print "Got: " + message_text
 
-            # Process message_text & Get message to send 
-            if message_text == "list":
+            '''
+                Process message_text & Get message to send 
+            '''
+
+            if message_text == "list":              #To view list of tasks todo
                 message_send = "Tasks Todo:"
                 incompleteTodos = TodoItem.query.filter_by(dateCompleted=None).order_by(TodoItem.dateAdded).all()
                 for i in range(len(incompleteTodos)):
@@ -131,7 +134,7 @@ def fb_webhook():
                 if len(incompleteTodos) == 0:
                     message_send = "No tasks todo!"
 
-            elif message_text == "list done":
+            elif message_text == "list done":       # To view list of completed tasks
                 message_send = "Completed Tasks:"
 
                 completeTodos = TodoItem.query.filter(TodoItem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
@@ -143,14 +146,14 @@ def fb_webhook():
 
             else:
                 query = message_text.split()
-                if query[0] == "add":
+                if query[0] == "add":               # For adding a new todo
                     text = ' '.join(query[1:])
                     newTodo = TodoItem(text=text, user=curUser, date=datetime.utcnow(), dateCompleted=None)
                     db.session.add(newTodo)
                     db.session.commit()
                     message_send = "To-do item '" + text + "'added to list."
 
-                elif query[0][0] == '#':
+                elif query[0][0] == '#':            # For Marking as complete and deleting
                     index = int(query[0][1:])
                     if query[1] == "done":
                         
