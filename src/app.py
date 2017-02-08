@@ -137,7 +137,7 @@ def fb_webhook():
                 completeTodos = TodoItem.query.filter(TodoItem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
                 for i in range(len(completeTodos)):
                     todo = completeTodos[i]
-                    message_send += "\n#%d: %s" % (todo.id, todo.text)
+                    message_send += "\n#%d: %s" % (i + 1, todo.text)
                 if len(completeTodos) == 0:
                     message_send = "No tasks completed yet!"
 
@@ -157,7 +157,7 @@ def fb_webhook():
                     newTodo = TodoItem(text=text, user=curUser, dateAdded=datetime.utcnow(), dateCompleted=None)
                     db.session.add(newTodo)
                     db.session.commit()
-                    message_send = "To-do item '" + text + "'added to list."
+                    message_send = "To-do item '" + text + "' added to list."
 
                 elif query[0][0] == '#':            # For Marking as complete and deleting
                     index = int(query[0][1:])
@@ -179,7 +179,7 @@ def fb_webhook():
                             curTodo = todoList[index - 1]
                             db.session.delete(curTodo)
                             db.session.commit()
-                            message_send = "Finished " + query[0] + ": " + curTodo.text
+                            message_send = "Deleted " + query[0] + ": " + curTodo.text
 
 
             request_url = FACEBOOK_API_MESSAGE_SEND_URL % (app.config['FACEBOOK_PAGE_ACCESS_TOKEN'])
