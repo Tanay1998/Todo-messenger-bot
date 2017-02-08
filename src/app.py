@@ -128,16 +128,10 @@ def fb_webhook():
                 Process message_text & Get message to send 
             '''
 
-            if message_text == "list":              #To view list of tasks todo
-                message_send = "Tasks Todo:"
-                incompleteTodos = get_todo_tasks()
-                for i in range(len(incompleteTodos)):
-                    todo = incompleteTodos[i]
-                    message_send += "\n#%d: %s" % (i + 1, todo.text)
-                if len(incompleteTodos) == 0:
-                    message_send = "No tasks todo!"
+            message_send = "Invalid command."
 
-            elif message_text == "list done":       # To view list of completed tasks
+            # To view list of completed tasks
+            if "list" in message_text and ("done" in message_text or "complete" in message_text):       
                 message_send = "Completed Tasks:"
 
                 completeTodos = TodoItem.query.filter(TodoItem.dateCompleted != None).order_by(TodoItem.dateAdded).all()
@@ -146,6 +140,15 @@ def fb_webhook():
                     message_send += "\n#%d: %s" % (todo.id, todo.text)
                 if len(completeTodos) == 0:
                     message_send = "No tasks completed yet!"
+
+            elif "list" in message_text:              #To view list of tasks todo
+                message_send = "Tasks Todo:"
+                incompleteTodos = get_todo_tasks()
+                for i in range(len(incompleteTodos)):
+                    todo = incompleteTodos[i]
+                    message_send += "\n#%d: %s" % (i + 1, todo.text)
+                if len(incompleteTodos) == 0:
+                    message_send = "No tasks todo!"            
 
             else:
                 query = message_text.split()
