@@ -179,14 +179,16 @@ def fb_webhook():
                     deleteIncomplete = True
                 if not deleteIncomplete and not deleteComplete:
                     deleteIncomplete, deleteComplete = True, True
-                message_send = ""
+
+                message_send = "Clearing tasks:"
                 if deleteComplete:
                     TodoItem.query.filter_by(user=curUser).filter(TodoItem.dateCompleted != None).delete(synchronize_session=False)
-                    message_send += "Cleared completed tasks"
+                    message_send += "\nCleared completed tasks"
                 if deleteIncomplete:
                     TodoItem.query.filter_by(user=curUser).filter_by(dateCompleted = None).delete(synchronize_session=False)
-                    message_send += "Cleared todo tasks"
-
+                    message_send += "\nCleared todo tasks"
+                session.commit()
+                
             elif len(message_text) > 0:
                 query = message_text.split()
 
