@@ -213,7 +213,7 @@ def fb_webhook():
                             message_send += "\n\t" + match
 
                 #Add a new task
-                elif len(query) > 1 and word_has(query[0], ["add", "insert", "input"]):               # For adding a new todo
+                elif len(query) > 1 and word_has(query[0], ["add", "insert", "input"]):   # For adding a new todo
                     text = ' '.join(query[1:])
                     newTodo = TodoItem(text=text, user=curUser, dateAdded=datetime.utcnow(), dateCompleted=None)
                     db.session.add(newTodo)
